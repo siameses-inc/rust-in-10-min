@@ -1,9 +1,6 @@
-fn sum(a: i32, b: i32) -> Result<i32, &'static str> {
-    if a == 0 && b == 0 {
-        return Err("zero numbers not allowed");
-    }
-    Ok(a + b)
-}
+mod domain;
+
+use crate::domain::basic_calculator::{BasicCalculator, Calculator};
 
 fn main() {
     let _x = 42;
@@ -12,30 +9,54 @@ fn main() {
 
     let (first, second) = (12, 17);
 
-    println!("hey {:?}", sum(first, second))
+    let calc = BasicCalculator;
+    println!("add {:?}", calc.add(first, second));
+    println!("sub {:?}", calc.sub(first, second));
+    println!("mul {:?}", calc.mul(first, second));
+    println!("div {:?}", calc.div(first, second));
 }
 
 #[cfg(test)]
 mod tests {
-    use super::sum;
+    use super::{BasicCalculator, Calculator};
 
     #[test]
-    fn sum_zero_numbers() {
-        let result = sum(0, 0);
+    fn adding() {
+        let calc = BasicCalculator;
+        let result = calc.add(2, 5);
 
-        match result {
-            Ok(s) => assert_eq!(s, 0),
-            Err(e) => eprintln!("{}", e),
-        }
+        assert_eq!(result, 7)
     }
 
     #[test]
-    fn error_on_summing_zeros() {
-        let result = sum(2, 5);
+    fn subtracting() {
+        let calc = BasicCalculator;
+        let result = calc.sub(2, 5);
 
-        match result {
-            Ok(s) => assert_eq!(s, 7),
-            _ => panic!(""),
-        }
+        assert_eq!(result, -3)
+    }
+
+    #[test]
+    fn multiplying() {
+        let calc = BasicCalculator;
+        let result = calc.mul(2, 5);
+
+        assert_eq!(result, 10)
+    }
+
+    #[test]
+    fn div() {
+        let calc = BasicCalculator;
+        let result = calc.div(10, 5);
+
+        assert_eq!(result, 2)
+    }
+
+    #[test]
+    fn basic_summing() {
+        let calc = BasicCalculator;
+        let result = calc.add(2, 5);
+
+        assert_eq!(result, 7)
     }
 }
