@@ -10,6 +10,9 @@ Use it as the single source of truth for commands and style in this repo.
 - Entry point: `src/main.rs`
 - Manifest: `Cargo.toml`
 - Build artifacts: `target/`
+- Crate type: binary (no `lib.rs`)
+- Dependencies: none in `Cargo.toml`; prefer std before adding crates
+- Modules: `src/domain/mod.rs` and `src/domain/basic_calculator.rs`
 
 ## Commands (build/lint/test)
 ### Build & run
@@ -42,6 +45,7 @@ Use it as the single source of truth for commands and style in this repo.
 - Keep code `clippy`-clean; treat warnings as errors (`-D warnings`).
 - Prefer explicit formatting over manual alignment or spacing tricks.
 - Avoid trailing whitespace and unused variables.
+- Use underscore prefix for intentionally unused locals (e.g., `_value`).
 
 ### Imports
 - Place all imports at the top of the file.
@@ -49,6 +53,7 @@ Use it as the single source of truth for commands and style in this repo.
 - Avoid inline imports inside functions; use `use` at module scope.
 - Use `crate::` paths for internal modules when possible.
 - Avoid glob imports except in tests.
+- In test modules, prefer `use super::...` for local items.
 
 ### Naming
 - Functions and variables: `snake_case`.
@@ -72,6 +77,7 @@ Use it as the single source of truth for commands and style in this repo.
 - Avoid panics in normal control flow; use `expect`/`unwrap` only for tests or
   when invariants are guaranteed and documented.
 - Use `Option<T>` for absence and convert to `Result` only at boundaries.
+- Prefer returning errors from helpers instead of handling in `main`.
 
 ### Functions and APIs
 - Keep functions small and single-purpose.
@@ -79,12 +85,14 @@ Use it as the single source of truth for commands and style in this repo.
 - Prefer pure functions; minimize side effects.
 - Document non-obvious behavior with concise comments.
 - Keep `main` thin; move logic to modules as it grows.
+- Traits should use verbs (`Calculator`) and implementations should be nouns.
 
 ### Tests
 - Place unit tests in the same module with `#[cfg(test)]`.
 - Name tests by behavior: `does_x_when_y` or `returns_x_for_y`.
 - Use `assert_eq!`/`assert!` with descriptive messages if needed.
 - Prefer deterministic tests; avoid time or randomness unless seeded.
+- Keep test helpers private to the test module.
 
 ### Documentation
 - Use `///` doc comments for public functions or modules.
@@ -103,6 +111,13 @@ Use it as the single source of truth for commands and style in this repo.
 - Avoid adding dependencies unless necessary; keep `Cargo.toml` lean.
 - Keep module files in `src/` using `mod_name.rs` or `mod_name/mod.rs`.
 - Prefer `pub(crate)` over `pub` unless the API is intentionally public.
+- Update `src/domain/mod.rs` when adding domain submodules.
+
+## Local patterns
+- Keep arithmetic/domain logic in `src/domain/` modules.
+- Prefer simple, total functions for calculator-style operations.
+- Keep public APIs small and focused; expose traits where useful.
+- Use `println!` only in `main` or examples, not domain modules.
 
 ## Tooling/automation expectations
 - Do not commit or push unless explicitly asked by the user.
@@ -122,6 +137,8 @@ Use it as the single source of truth for commands and style in this repo.
   `cargo test returns_expected`
 - Run tests in a file (module path):
   `cargo test my_module`
+- Run a single test in `src/main.rs`:
+  `cargo test tests::adding`
 
 ## Notes for agents
 - Keep changes minimal and focused; prefer small diffs.
